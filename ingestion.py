@@ -4,6 +4,7 @@ import uuid
 from dotenv import load_dotenv
 from qdrant_client import QdrantClient, models
 from fastembed import TextEmbedding, SparseTextEmbedding, LateInteractionTextEmbedding
+from utils.semantic_chunker import SemanticChunker
 
 load_dotenv()
 
@@ -12,7 +13,7 @@ SPARSE_MODEL = "Qdrant/bm25"
 COLBERT_MODEL = "colbert-ir/colbertv2.0"
 COLLECTION_NAME = "financial"
 FILE_PATH = "./AAPL_10-K_1A_temp.md"
-
+MAX_TOKENS = 300
 qdrant = QdrantClient(
     api_key=os.getenv("API_KEY_QDRANT"),
     url=os.getenv("QDRANT_URL"),
@@ -38,8 +39,8 @@ qdrant.create_collection(
 with open(FILE_PATH, "r", encoding="utf-8") as f:
     content = f.read()
 
-paragraphs = content.split("\n\n")
-chunks = [p.strip() for p in paragraphs if len(p.strip()) > 50]
+chunker = SemanticChunker(max_tokens=MAX_TOKENS)
+chunks = chunker.create_chunks(content)
 
 dense_model = TextEmbedding(model_name=DENSE_MODEL)
 sparse_model = SparseTextEmbedding(model_name=SPARSE_MODEL)
