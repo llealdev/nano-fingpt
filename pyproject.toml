@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "docling>=2.97.0",
+    "edgartools>=5.35.1",
     "hdbscan>=0.8.44",
     "nltk>=3.9.4",
     "numpy>=2.4.6",
